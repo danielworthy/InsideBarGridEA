@@ -20,14 +20,13 @@
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-// last modified 2019-08-9
+// last modified 2019-09-24
+// removed trend detection
 // designed for h4 or d1 ONLY
 // set buffer to static 30
 // fixed increment lots bug
 // adusted lot sizes upwards by 0.01
 // doubled profit target 
-// using ADX instead of RSI for trend detection
-// changed to AO instead of ADX which wasn't triggering
 
 
 
@@ -157,14 +156,12 @@ void subMAINLOGIC() {
    if ( SELL_ORDERS_PENDING < cMAX_ORDERS && TOTAL_ORDERS > 0 && PROFIT < cTARGET ) subSELL(); // buy  can figure out it's own parameters    
 
    
-   AO1 = iAO(NULL,PERIOD_W1,1);
-   AO2 = iAO(NULL,PERIOD_W1,2);
    
    
    
    // if we find an inside bar, we want to make sure we have pending orders set up ready   
-   if ( subINSIDEBAR() &&  AO1 > AO2 && AO1 > 0    && BUY_ORDERS_PENDING < cMAX_ORDERS  )   subBUY(); 
-   if ( subINSIDEBAR() &&  AO1 < AO2 && AO1 < 0    && SELL_ORDERS_PENDING < cMAX_ORDERS  )   subSELL(); 
+   if ( subINSIDEBAR() && BUY_ORDERS_PENDING < cMAX_ORDERS  )   subBUY(); 
+   if ( subINSIDEBAR() && SELL_ORDERS_PENDING < cMAX_ORDERS  )   subSELL(); 
    
    
       
