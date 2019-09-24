@@ -52,7 +52,7 @@ const int           cMAX_PAIRS_OPEN = 2;
 // ------------------------------------------------------------------------------------------
 
 int NULL0;
-double RANGE1=0;
+double RANGE1, RANGE2 =0;
 
 string ALLC[];
 string SORTED[];
@@ -201,6 +201,7 @@ bool subINSIDEBAR() {
       
       
       RANGE1 = ( HIGH1-LOW1 );
+      RANGE2 = ( HIGH2-LOW2 );
 
 
       BODY1 = MathAbs(OPEN1 - CLOSE1);
@@ -216,7 +217,7 @@ bool subINSIDEBAR() {
       // let's just check bar 1 for insidebar-ness against bar 2 - we still have to place orders when price is within bar 1
       //if ( ( iHigh(NULL,0,2) > HIGH && iLow(NULL,0,2) < LOW ) && Bid < HIGH && Ask > LOW   ) return(true);
       
-      if (  BODY1 < BODY2 && HIGH1 < HIGH2 && LOW1 > LOW2 && Bid < HIGH1 && Ask > LOW1   ) return(true);
+      if (  BODY1 < BODY2 && RANGE1 < RANGE2 && Bid < HIGH1 && Ask > LOW1   ) return(true);
            
 
    return(false);
