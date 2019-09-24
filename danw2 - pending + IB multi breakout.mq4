@@ -217,7 +217,7 @@ bool subINSIDEBAR() {
       // let's just check bar 1 for insidebar-ness against bar 2 - we still have to place orders when price is within bar 1
       //if ( ( iHigh(NULL,0,2) > HIGH && iLow(NULL,0,2) < LOW ) && Bid < HIGH && Ask > LOW   ) return(true);
       
-      if (  BODY1 < BODY2 && RANGE1 < RANGE2 && Bid < HIGH1 && Ask > LOW1   ) return(true);
+      if (  BODY1 < BODY2 && RANGE1 < RANGE2 && HIGH1 < HIGH2 && LOW1 > LOW2 &&  Bid < HIGH1 && Ask > LOW1   ) return(true);
            
 
    return(false);
@@ -345,10 +345,9 @@ sComm = sComm + MS + "Biggest Buy Lot  -> " + DoubleToStr(gBIGGEST_BUY_LOT,2) + 
 sComm = sComm + MS + "Biggest Sell Lot  -> " + DoubleToStr(gBIGGEST_SELL_LOT,2) + NL; 
 sComm = sComm + MS + "Lots2send -> " + DoubleToStr(gBUYLOTS2SEND,2) + " / " + DoubleToStr(gBUYLOTS2SEND,2) + NL; 
 sComm = sComm + MS + "Highest/Lowest Price -> " + DoubleToStr(gHIGHEST_PRICE,Digits) + " / " + DoubleToStr(gLOWESTPRICE,Digits) + NL; 
-sComm = sComm + MS + "Range -> "  + DoubleToStr(RANGE1,Digits)+ NL; 
 sComm = sComm + MS + "cBUFFER -> "  + cBUFFER + NL;   // buffer actually v. important. Don't want it to be too small 
 sComm = sComm + MS + "ATR -> "  + DoubleToStr(ATR/pointvalue,1)+ NL; 
-sComm = sComm + MS + "RANGE -> "  + DoubleToStr(RANGE1/pointvalue,1)+ NL; 
+sComm = sComm + MS + "RANGE 1/2 -> "  + DoubleToStr(RANGE1/pointvalue,1)+ " / " + DoubleToStr(RANGE2/pointvalue,1) + NL; 
 sComm = sComm + MS + "BODY 1/2 -> "  + BODY1 + " / " + BODY2 + NL;
 
 
