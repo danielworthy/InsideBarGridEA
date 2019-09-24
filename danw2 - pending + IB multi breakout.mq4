@@ -20,13 +20,13 @@
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
+// designed for h4 or d1 ONLY
+
 // last modified 2019-09-24
 // removed trend detection
-// designed for h4 or d1 ONLY
-// set buffer to static 30
+// fixed range bug
+// did other stuff
 // fixed increment lots bug
-// adusted lot sizes upwards by 0.01
-// doubled profit target 
 
 
 
@@ -34,25 +34,36 @@ extern string           Expert_Name          = "Danw2 - Pending + IB multi break
 
 
 bool          EMERGENCY = false;
-const int           cTARGET = 200;
+const int           cTARGET = 100;
 const int           cMAX_ORDERS = 10;
-const int           cBUFFER = 30;
+const int           cBUFFER = 20;
 const int           cMAX_SPREAD = 60;
 const bool          cINCREMENT_LOTS = true;
-const double        cINCREMENT_VALUE = 0.03;
-const double        cLOT_SIZE = 0.03;
+const double        cINCREMENT_VALUE = 0.02;
+const double        cLOT_SIZE = 0.02;
 const int           cLOT_DIVISOR = 10;
 const int           cSLIPPAGE = 2;
 const int           cMIN_MARGIN = 1000;
 const int           cMAX_PAIRS_OPEN = 2;
 
+
+
+
 // ------------------------------------------------------------------------------------------
 
 int NULL0;
-double RANGE=0;
+double RANGE1=0;
 
 string ALLC[];
 string SORTED[];
+
+double HIGH1, LOW1 =0;
+double HIGH2, LOW2 =0;
+
+double OPEN1, CLOSE1 = 0;
+double OPEN2, CLOSE2 = 0;
+
+double BODY1, BODY2 = 0;
 
 
 // ------------------------------------------------------------------------------------------
@@ -84,14 +95,13 @@ string SORTED[];
    // ------------------------------------------------------------------------------------------
    
    double gBIGGEST_BUY_LOT, gBIGGEST_SELL_LOT, gBUYLOTS2SEND, gSELLLOTS2SEND, gHIGHEST_PRICE, gLOWESTPRICE, gINCREMENT_VALUE;
-   double AO1, AO2 =0;
-   
+      
    
 // ------------------------------------------------------------------------------------------
 
 int OnInit()
   {
-   EventSetTimer(45);
+   EventSetTimer(30);
    if(Digits==4 || Digits==2) pointvalue=Point;  else if(Digits==5 || Digits==3) pointvalue=10.0*Point;
 
 return(INIT_SUCCEEDED);
@@ -174,16 +184,40 @@ void subMAINLOGIC() {
 
 bool subINSIDEBAR() {
    
-      double HIGH = iHigh(NULL,0,1);
-      double LOW = iLow(NULL,0,1);
-      RANGE = ( HIGH-LOW ) / pointvalue;
+      HIGH1 = iHigh(NULL,0,1);
+      LOW1 = iLow(NULL,0,1);
+      
+      HIGH2 = iHigh(NULL,0,2);
+      LOW2 = iLow(NULL,0,2);
+      
+      
+      OPEN1 = iOpen(NULL,0,1);
+      CLOSE1 = iClose(NULL,0,1);
+      
+      OPEN2 = iOpen(NULL,0,2);
+      CLOSE2 = iClose(NULL,0,2);
+      
+               
+      
+      
+      RANGE1 = ( HIGH1-LOW1 );
+
+
+      BODY1 = MathAbs(OPEN1 - CLOSE1);
+      BODY2 = MathAbs(OPEN2 - CLOSE2); 
+      
 
       // not interested in the inside bar if it's bigger than ATR
       ATR=iATR(NULL,0,20,1);
-      if ( RANGE > ATR ) return(false);
+      
+           
+      if ( RANGE1 > ATR ) return(false);
    
       // let's just check bar 1 for insidebar-ness against bar 2 - we still have to place orders when price is within bar 1
-      if ( ( iHigh(NULL,0,2) > HIGH && iLow(NULL,0,2) < LOW ) && Bid < HIGH && Ask > LOW   ) return(true);
+      //if ( ( iHigh(NULL,0,2) > HIGH && iLow(NULL,0,2) < LOW ) && Bid < HIGH && Ask > LOW   ) return(true);
+      
+      if (  BODY1 < BODY2 && HIGH1 < HIGH2 && LOW1 > LOW2 && Bid < HIGH1 && Ask > LOW1   ) return(true);
+           
 
    return(false);
    
@@ -310,10 +344,16 @@ sComm = sComm + MS + "Biggest Buy Lot  -> " + DoubleToStr(gBIGGEST_BUY_LOT,2) + 
 sComm = sComm + MS + "Biggest Sell Lot  -> " + DoubleToStr(gBIGGEST_SELL_LOT,2) + NL; 
 sComm = sComm + MS + "Lots2send -> " + DoubleToStr(gBUYLOTS2SEND,2) + " / " + DoubleToStr(gBUYLOTS2SEND,2) + NL; 
 sComm = sComm + MS + "Highest/Lowest Price -> " + DoubleToStr(gHIGHEST_PRICE,Digits) + " / " + DoubleToStr(gLOWESTPRICE,Digits) + NL; 
-sComm = sComm + MS + "Range -> "  + DoubleToStr(RANGE,Digits)+ NL; 
+sComm = sComm + MS + "Range -> "  + DoubleToStr(RANGE1,Digits)+ NL; 
 sComm = sComm + MS + "cBUFFER -> "  + cBUFFER + NL;   // buffer actually v. important. Don't want it to be too small 
-sComm = sComm + MS + "AO -> "  + AO1 + " | " + AO2 + NL;
 sComm = sComm + MS + "ATR -> "  + DoubleToStr(ATR/pointvalue,1)+ NL; 
+sComm = sComm + MS + "RANGE -> "  + DoubleToStr(RANGE1/pointvalue,1)+ NL; 
+sComm = sComm + MS + "BODY 1/2 -> "  + BODY1 + " / " + BODY2 + NL;
+
+
+sComm = sComm + MS + "INSIDE BAR? -> "  + subINSIDEBAR() + NL; 
+
+
 sComm = sComm + MS + "Pairs Open -> " + subCURRENCIESOPEN() + " / " + subSHOWSORTED()+ NL;
 
 if ( EMERGENCY ) sComm = sComm + MS + "Emergency!" + NL; 
