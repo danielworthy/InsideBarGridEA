@@ -1,0 +1,22 @@
+Hedging EA
+
+
+Places multiple trades with increasing lot size on either side of an inside bar on a trending currency pair. 
+
+Tested on H4 time frame, trend detection is currently defined as a 20 period daily RSI being > 55 or < 45
+
+Will attempt to close all orders after reaching a modest profit only, and hedge losses.
+
+
+Currently working with settings as they are (some are hard coded at the moment), barring any black swan events. 
+
+
+Hedged trades can be open for months in a quiet market. Profits can be quick in an active one.
+
+
+The key to this system is keeping risk low by using conservative settings, but even so, would probably would never use this live due to the 
+risk of a black swan event. 
+
+
+
+
