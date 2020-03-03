@@ -1,4 +1,4 @@
-Hedging EA
+Hedging EA for Metatrader 4
 
 
 Places multiple trades with increasing lot size on either side of an inside bar on a trending currency pair. 
