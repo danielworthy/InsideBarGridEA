@@ -22,11 +22,14 @@
 
 // designed for h4 or d1 ONLY
 
-// last modified 2019-09-24
+// last modified 2019-11-14
 // removed trend detection
 // fixed range bug
 // did other stuff
 // fixed increment lots bug
+
+// there's something weird with the way the order gaps in pips is calculated. 20 pips seems to equal 200 pips, I am not sure what changed
+// but we can't have a spread be 60 pips and the gap 20 pips. cbuffer issue?
 
 
 
@@ -34,9 +37,9 @@ extern string           Expert_Name          = "Danw2 - Pending + IB multi break
 
 
 bool          EMERGENCY = false;
-const int           cTARGET = 100;
+const int           cTARGET = 200;
 const int           cMAX_ORDERS = 10;
-const int           cBUFFER = 20;
+const int           cBUFFER = 10;
 const int           cMAX_SPREAD = 60;
 const bool          cINCREMENT_LOTS = true;
 const double        cINCREMENT_VALUE = 0.02;
@@ -64,6 +67,7 @@ double OPEN1, CLOSE1 = 0;
 double OPEN2, CLOSE2 = 0;
 
 double BODY1, BODY2 = 0;
+double gDAYATR=0;
 
 
 // ------------------------------------------------------------------------------------------
@@ -209,10 +213,30 @@ bool subINSIDEBAR() {
       
 
       // not interested in the inside bar if it's bigger than ATR
-      ATR=iATR(NULL,0,20,1);
+      ATR=iATR(NULL,0,100,1);
+      gDAYATR=iATR(NULL,PERIOD_D1,100,1);
       
            
       if ( RANGE1 > ATR ) return(false);
+   
+   
+   // don't trade if average ATR is lower than long average
+   
+      double fBIGATR=iATR(NULL,0,100,1);
+      double fSMALLATR=iATR(NULL,0,10,1);
+      if ( fSMALLATR < fBIGATR ) return(false);
+
+
+   // we want some sort of trend happening too
+      
+      int fMYPERIOD = PERIOD_D1;
+      if ( Period() == PERIOD_H4 ) fMYPERIOD = PERIOD_D1;
+      if ( Period() == PERIOD_D1 ) fMYPERIOD = PERIOD_W1;
+      
+      int fRSI = iRSI(NULL,fMYPERIOD,20,PRICE_CLOSE,1);
+            
+      if ( fRSI < 55 && fRSI > 45 ) return(false);
+   
    
       // let's just check bar 1 for insidebar-ness against bar 2 - we still have to place orders when price is within bar 1
       //if ( ( iHigh(NULL,0,2) > HIGH && iLow(NULL,0,2) < LOW ) && Bid < HIGH && Ask > LOW   ) return(true);
@@ -295,8 +319,8 @@ void subCLOSEDECISIONS() {
   
    
 // kills off trades forcably if margin is low or too many trades only if the baskets are making money
-   if (subMARGINCHECK() < cMIN_MARGIN      && PROFIT  > ( cTARGET * 0.1 ) )     subCLOSE_AND_DELETE_ALL_ORDERS();    
-   if (TOTAL_ORDERS_OPEN > cMAX_ORDERS && PROFIT  > ( cTARGET * 0.1 ) )  subCLOSE_AND_DELETE_ALL_ORDERS();    
+   if (subMARGINCHECK() < cMIN_MARGIN      && PROFIT  > ( cTARGET * 0.2 ) )     subCLOSE_AND_DELETE_ALL_ORDERS();    
+   if (TOTAL_ORDERS_OPEN > cMAX_ORDERS && PROFIT  > ( cTARGET * 0.2 ) )  subCLOSE_AND_DELETE_ALL_ORDERS();    
    if (subMARGINCHECK() < cMIN_MARGIN && AccountProfit() > 1  ) subCLOSE_AND_DELETE_ALL_PAIRS(); 
 
 }
@@ -347,6 +371,7 @@ sComm = sComm + MS + "Lots2send -> " + DoubleToStr(gBUYLOTS2SEND,2) + " / " + Do
 sComm = sComm + MS + "Highest/Lowest Price -> " + DoubleToStr(gHIGHEST_PRICE,Digits) + " / " + DoubleToStr(gLOWESTPRICE,Digits) + NL; 
 sComm = sComm + MS + "cBUFFER -> "  + cBUFFER + NL;   // buffer actually v. important. Don't want it to be too small 
 sComm = sComm + MS + "ATR -> "  + DoubleToStr(ATR/pointvalue,1)+ NL; 
+sComm = sComm + MS + "DAY ATR -> "  + DoubleToStr(gDAYATR/pointvalue,1)+ NL; 
 sComm = sComm + MS + "RANGE 1/2 -> "  + DoubleToStr(RANGE1/pointvalue,1)+ " / " + DoubleToStr(RANGE2/pointvalue,1) + NL; 
 sComm = sComm + MS + "BODY 1/2 -> "  + BODY1 + " / " + BODY2 + NL;
 
