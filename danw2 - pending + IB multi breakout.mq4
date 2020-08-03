@@ -22,7 +22,9 @@
 
 // designed for h4 or d1 ONLY
 
-// last modified 2019-11-14
+// last modified 2020-07-22
+
+// adjusted lot sizes and target profit as demo is up 2x
 // removed trend detection
 // fixed range bug
 // did other stuff
@@ -37,13 +39,13 @@ extern string           Expert_Name          = "Danw2 - Pending + IB multi break
 
 
 bool          EMERGENCY = false;
-const int           cTARGET = 200;
+const int           cTARGET = 400;
 const int           cMAX_ORDERS = 10;
 const int           cBUFFER = 10;
 const int           cMAX_SPREAD = 60;
 const bool          cINCREMENT_LOTS = true;
 const double        cINCREMENT_VALUE = 0.02;
-const double        cLOT_SIZE = 0.02;
+const double        cLOT_SIZE = 0.04;
 const int           cLOT_DIVISOR = 10;
 const int           cSLIPPAGE = 2;
 const int           cMIN_MARGIN = 1000;
@@ -136,7 +138,8 @@ void OnTimer()
    subDISPLAY();
    
    
-   Sleep(1000);
+   Sleep(15*1000);
+
    return; // end of program
 
 }
@@ -148,10 +151,11 @@ void OnTimer()
 
 void subMAINLOGIC() {
       
-
    subSetParams();
    subDRAW();   
 
+   
+   
 
    if ( TOTAL_ORDERS == 0 && subCURRENCIESOPEN() >= cMAX_PAIRS_OPEN ) return;   // don't open if there are many other pairs open
 
@@ -171,7 +175,9 @@ void subMAINLOGIC() {
 
    
    
+   // if we have enough pairs open, don't set new ones. I hope above logic takes care of gaps in existing orders though
    
+   if (  subCURRENCIESOPEN() >= cMAX_PAIRS_OPEN ) return; 
    
    // if we find an inside bar, we want to make sure we have pending orders set up ready   
    if ( subINSIDEBAR() && BUY_ORDERS_PENDING < cMAX_ORDERS  )   subBUY(); 
