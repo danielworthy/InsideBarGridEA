@@ -22,8 +22,10 @@
 
 // designed for h4 or d1 ONLY
 
-// last modified 2020-07-22
+// last modified 2021-01-10
 
+
+// reducing settings back as system suffered serious margin calls
 // adjusted lot sizes and target profit as demo is up 2x
 // removed trend detection
 // fixed range bug
@@ -39,13 +41,13 @@ extern string           Expert_Name          = "Danw2 - Pending + IB multi break
 
 
 bool          EMERGENCY = false;
-const int           cTARGET = 400;
+const int           cTARGET = 100;
 const int           cMAX_ORDERS = 10;
-const int           cBUFFER = 10;
+const int           cBUFFER = 20;
 const int           cMAX_SPREAD = 60;
 const bool          cINCREMENT_LOTS = true;
 const double        cINCREMENT_VALUE = 0.02;
-const double        cLOT_SIZE = 0.04;
+const double        cLOT_SIZE = 0.02;
 const int           cLOT_DIVISOR = 10;
 const int           cSLIPPAGE = 2;
 const int           cMIN_MARGIN = 1000;
@@ -189,7 +191,7 @@ void subMAINLOGIC() {
 
 
 // ------------------------------------------------------------------------------------------
-// IB ? 
+//  Do we have an Inside Bar? 
 // ------------------------------------------------------------------------------------------
 
 bool subINSIDEBAR() {
@@ -208,7 +210,7 @@ bool subINSIDEBAR() {
       CLOSE2 = iClose(NULL,0,2);
       
                
-      
+	      
       
       RANGE1 = ( HIGH1-LOW1 );
       RANGE2 = ( HIGH2-LOW2 );
@@ -218,12 +220,14 @@ bool subINSIDEBAR() {
       BODY2 = MathAbs(OPEN2 - CLOSE2); 
       
 
-      // not interested in the inside bar if it's bigger than ATR
+      // not interested in the inside bar if it's H/L range or body is bigger than ATR
+
       ATR=iATR(NULL,0,100,1);
       gDAYATR=iATR(NULL,PERIOD_D1,100,1);
       
            
-      if ( RANGE1 > ATR ) return(false);
+	if ( RANGE1 > ATR ) return(false);
+	if ( BODY1  > ATR ) return(false);
    
    
    // don't trade if average ATR is lower than long average
@@ -325,8 +329,8 @@ void subCLOSEDECISIONS() {
   
    
 // kills off trades forcably if margin is low or too many trades only if the baskets are making money
-   if (subMARGINCHECK() < cMIN_MARGIN      && PROFIT  > ( cTARGET * 0.2 ) )     subCLOSE_AND_DELETE_ALL_ORDERS();    
-   if (TOTAL_ORDERS_OPEN > cMAX_ORDERS && PROFIT  > ( cTARGET * 0.2 ) )  subCLOSE_AND_DELETE_ALL_ORDERS();    
+   if (subMARGINCHECK() < cMIN_MARGIN      && PROFIT  > ( cTARGET * 0.1 ) )     subCLOSE_AND_DELETE_ALL_ORDERS();    
+   if (TOTAL_ORDERS_OPEN > cMAX_ORDERS && PROFIT  > ( cTARGET * 0.1 ) )  subCLOSE_AND_DELETE_ALL_ORDERS();    
    if (subMARGINCHECK() < cMIN_MARGIN && AccountProfit() > 1  ) subCLOSE_AND_DELETE_ALL_PAIRS(); 
 
 }
