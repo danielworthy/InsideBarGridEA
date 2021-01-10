@@ -237,16 +237,28 @@ bool subINSIDEBAR() {
       if ( fSMALLATR < fBIGATR ) return(false);
 
 
+
    // we want some sort of trend happening too
       
       int fMYPERIOD = PERIOD_D1;
       if ( Period() == PERIOD_H4 ) fMYPERIOD = PERIOD_D1;
       if ( Period() == PERIOD_D1 ) fMYPERIOD = PERIOD_W1;
       
-      int fRSI = iRSI(NULL,fMYPERIOD,20,PRICE_CLOSE,1);
+      
+      int fRSI1 = iRSI(NULL,fMYPERIOD,20,PRICE_CLOSE,1);
+      
+      
+      int fRSI2 = ( iRSI(NULL,fMYPERIOD,20,PRICE_CLOSE,2) + iRSI(NULL,fMYPERIOD,20,PRICE_CLOSE,3) + iRSI(NULL,fMYPERIOD,20,PRICE_CLOSE,4) ) /3;
             
-      if ( fRSI < 55 && fRSI > 45 ) return(false);
+            
+      // high time frame isn't trending, so return      
+      if ( fRSI1 < 55 && fRSI1 > 45 ) return(false);
    
+      // if we have a trend, but it is losing steam, then return
+      if ( fRSI1 >  55 && fRSI1 < fRSI2 ) return(false);
+      if ( fRSI1 <  45 && fRSI2 > fRSI1 ) return(false); 
+      
+        
    
       // let's just check bar 1 for insidebar-ness against bar 2 - we still have to place orders when price is within bar 1
       //if ( ( iHigh(NULL,0,2) > HIGH && iLow(NULL,0,2) < LOW ) && Bid < HIGH && Ask > LOW   ) return(true);
