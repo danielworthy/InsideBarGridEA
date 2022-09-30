@@ -68,3 +68,24 @@ Update 2022-06
 
 The month of May saw some big trends in the Forex market and the bot captured tremendous gains (but it currently in a little bit of drawndown).
 
+--
+
+Update 2022-09
+
+This bot pretty much bought the farm - it was stuck with open EURGBP buy and sell trades for nearly 4 months before this pair eventually moved
+enough to bring them into profit.
+
+It actually caused a margin call - which caused a 40% loss of starting capital - showing the settings are now too agressive again. 
+
+Then it looked to be heading for disaster again but EURGBP finally made some big moves and all trades closed with 60% total profit.
+
+We got lucky. 
+
+So it's an extremely risky bot, especially with current settings.
+
+I will de-tune the settings a little. 
+
+Am currently trying some other mild hedging bots which seem safer over all but will keep this one going out of interest.
+
+--
+
