@@ -89,3 +89,17 @@ Am currently trying some other mild hedging bots which seem safer over all but w
 
 --
 
+Update 2022-12
+
+Blown account!
+
+This happened quite quickly when it entered into a gold hedge trade. The bot couldn't account for the rapid moves in prices and margin called the account. 
+
+Have thought maybe that this is the end of the Hedgebot. Hedging can work - sometimes - but is very risky, as we see here.
+
+But, since it's a demo account, it's not going to hurt to start it up again with a few tweaks to the settings (and not trading gold!). 
+
+When I decide what changes to make, I'll start a new account and set it running, and post more updates here after a while.
+
+
+
